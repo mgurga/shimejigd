@@ -1,5 +1,6 @@
 extends Sprite2D
 const ShimejiPack = preload("res://ShimejiPack.gd")
+const ConfigManager = preload("res://ConfigManager.gd")
 
 var pack: ShimejiPack
 var shime_size = 0
@@ -12,7 +13,7 @@ func set_shime(frame: int) -> void:
 	cur_frame = frame
 	self.texture = ImageTexture.create_from_image(pack.frames[cur_frame])
 
-func _init(p: ShimejiPack) -> void:
+func _init(p: ShimejiPack, cm: ConfigManager) -> void:
 	pack = p
 	shime_size = pack.frames[0].get_size().x
 	

@@ -1,7 +1,9 @@
 extends Node
 const ShimejiPack = preload("res://ShimejiPack.gd")
+const ConfigManager = preload("res://ConfigManager.gd")
 const Shimeji = preload("res://shimeji.gd")
 
+var cm: ConfigManager
 var packs = []
 var shimejis = []
 
@@ -19,20 +21,37 @@ func _ready() -> void:
 		create_project_folder(project_path)
 	else:
 		print("shimejigd folder found ^_^")
+	cm = get_config_manager(project_path)
 
 	# find all shimeji packs
 	packs = ShimejiPack.get_packs(project_path + "/packs")
 	
 	# create first shimeji
-	create_shimeji()
+	var num = cm.config.get_value("manager", "starting_shimes", 1)
+	for i in range(0, num):
+		create_shimeji()
 	
 	pass # Replace with function body.
 
 func create_shimeji():
-	var sprite = Shimeji.new(packs[0])
+	var pack = cm.config.get_value("manager", "pack", "random")
+	
+	var sprite = Shimeji.new(packs[0], cm)
+	if pack == "random":
+		sprite = Shimeji.new(packs.pick_random(), cm)
+	else:
+		for p in packs:
+			if p.name == pack:
+				sprite = Shimeji.new(packs[0], cm)
 	add_child(sprite)
 
-func create_project_folder(project_path: String):
+func get_config_manager(project_path: String) -> ConfigManager:
+	if not FileAccess.file_exists(project_path + "/config.txt"):
+		DirAccess.copy_absolute("res://default_config.txt", project_path + "/config.txt")
+	
+	return ConfigManager.new(project_path)
+
+func create_project_folder(project_path: String) -> void:
 	print("shimejigd folder does not exist creating one at: " + project_path)
 	DirAccess.make_dir_absolute(project_path)
 	var packs_path = project_path + "/packs"

@@ -1,0 +1,8 @@
+[manager]
+starting_shimes = 3
+
+; shimejipacks to use for new shimes
+pack = random
+
+[shime]
+scale = 1

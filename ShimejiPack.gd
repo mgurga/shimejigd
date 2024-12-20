@@ -1,5 +1,6 @@
 class_name ShimejiPack
 
+var name = ""
 var frames = []
 
 static func get_pack(pack_path: String) -> ShimejiPack:
@@ -32,6 +33,7 @@ static func get_packs(packs_path: String) -> Array:
 	while fn != "":
 		var pack = get_pack(packs_path + "/" + fn)
 		if not pack == null:
+			pack.name = fn
 			out.append(pack)
 		fn = dir.get_next()
 	
