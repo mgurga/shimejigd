@@ -31,7 +31,7 @@ func _ready() -> void:
 	for i in range(0, num):
 		create_shimeji()
 	
-	pass # Replace with function body.
+	pass
 
 func create_shimeji():
 	var pack = cm.config.get_value("manager", "pack", "random")
