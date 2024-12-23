@@ -5,15 +5,19 @@ const ConfigManager = preload("res://ConfigManager.gd")
 var pack: ShimejiPack
 var shime_size = 0
 var cur_frame = 0
-var falling = false
 var time = 0
+
+var falling = false
+
 var walk_direction = false # false = left, true = right
 var walk_timer = 0
+
+var grabbed = false
 
 func set_shime(frame: int) -> void:
 	if cur_frame == frame:
 		return
-	
+
 	cur_frame = frame
 	self.texture = ImageTexture.create_from_image(pack.frames[cur_frame])
 
@@ -31,7 +35,7 @@ func _ready() -> void:
 	pass
 
 func action_happening() -> bool:
-	return falling or walk_timer != 0
+	return falling or walk_timer != 0 or grabbed
 
 func _process(delta: float) -> void:
 	time += delta
@@ -68,3 +72,31 @@ func _process(delta: float) -> void:
 
 		if walk_timer % 10 == 0:
 			set_shime(2 if cur_frame == 1 else 1)
+	
+	var mp = get_viewport().get_mouse_position()
+	var hovered_over = get_rect().has_point(to_local(mp))
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and hovered_over:
+		self.position.x = mp.x
+		self.position.y = mp.y
+		
+		var mvx = Input.get_last_mouse_velocity().x
+		if mvx == 0:
+			set_shime(0)
+		
+		if 0 < mvx and mvx < 100:
+			set_shime(4)
+		elif 100 <= mvx and mvx < 400:
+			set_shime(6)
+		elif 400 <= mvx:
+			set_shime(8)
+		
+		if 0 > mvx and mvx > -100:
+			set_shime(5)
+		elif -100 >= mvx and mvx > -400:
+			set_shime(7)
+		elif -400 >= mvx:
+			set_shime(9)
+		
+		grabbed = true
+	elif not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and grabbed:
+		grabbed = false
