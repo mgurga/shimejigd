@@ -8,6 +8,7 @@ var cur_frame = 0
 var time = 0
 
 var falling = false
+var vel = Vector2(0, 0)
 
 var walk_direction = false # false = left, true = right
 var walk_timer = 0
@@ -39,6 +40,9 @@ func action_happening() -> bool:
 
 func _process(delta: float) -> void:
 	time += delta
+	
+	self.position.x += vel.x
+	vel.x = vel.x * 0.9
 	
 	if self.position.y + (shime_size / 2) <= get_window().size.y:
 		self.position.y += 2
@@ -78,6 +82,7 @@ func _process(delta: float) -> void:
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and hovered_over:
 		self.position.x = mp.x
 		self.position.y = mp.y
+		self.flip_h = false
 		
 		var mvx = Input.get_last_mouse_velocity().x
 		if mvx == 0:
@@ -100,3 +105,5 @@ func _process(delta: float) -> void:
 		grabbed = true
 	elif not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and grabbed:
 		grabbed = false
+		vel.x = Input.get_last_mouse_velocity().x / 100
+		walk_timer = 0
